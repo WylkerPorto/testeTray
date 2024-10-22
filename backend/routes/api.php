@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\SaleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,14 +16,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:api')->group(function () {
+    Route::apiResource('users', UserController::class);
+    Route::apiResource('sales', SaleController::class);
+    Route::get('/users/{id}/sales', [UserController::class, 'getSalesByUser']);
 });
 
-Route::get('/', function () {
-    return response()->json(['message' => 'API startada!']);
-});
-
-Route::get('/teste', function () {
-    return response()->json(['message' => 'API funcionando!']);
-});
+Route::post('login', 'App\Http\Controllers\Auth\AuthController@login');
