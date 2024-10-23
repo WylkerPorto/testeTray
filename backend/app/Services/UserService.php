@@ -13,12 +13,23 @@ class UserService
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'is_admin' => $data['is_admin'] ?? false,
         ]);
     }
 
     public function updateUser(User $user, array $data)
     {
-        $user->update($data);
+        if (isset($data['password'])) {
+            $data['password'] = Hash::make($data['password']);
+        }
+
+        // Mantém o valor original se não for fornecido valor novo
+        $user->update([
+            'name' => $data['name'] ?? $user->name,
+            'email' => $data['email'] ?? $user->email,
+            'password' => $data['password'] ?? $user->password,
+            'is_admin' => $data['is_admin'] ?? $user->is_admin,
+        ]);
         return $user;
     }
 

@@ -23,17 +23,9 @@ class SaleRequest extends FormRequest
     {
         $rules = [
             'value' => 'required|numeric',
+            // verifica se o método é POST e se o id do usuário é informado
+            'user_id' => $this->isMethod('post') ? 'required|exists:users,id' : 'nullable|exists:users,id',
         ];
-
-        // Se for uma requisição POST (criação), exigir o campo user_id
-        if ($this->isMethod('post')) {
-            $rules['user_id'] = 'required|exists:users,id';
-        }
-
-        // Se for uma requisição PUT ou PATCH (atualização), user_id é opcional
-        if ($this->isMethod('put') || $this->isMethod('patch')) {
-            $rules['user_id'] = 'nullable|exists:users,id';  // user_id opcional na atualização
-        }
 
         return $rules;
     }

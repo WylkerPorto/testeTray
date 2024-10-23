@@ -1,0 +1,68 @@
+@mixin icon ($name) {
+  mask-image: url('@/assets/icons/#{$name}.svg');
+}
+
+i.icon {
+  &.i-user {
+    @include icon('user');
+  }
+
+  &.i-locker {
+    @include icon('locker');
+  }
+}
+
+
+$icon-size-xs: 10px;
+$icon-size-sm: 15px;
+$icon-size-default: 20px;
+$icon-size-lg: 35px;
+
+i.icon {
+  /*** DEFAULT ***/
+
+  background: #94a4ba;
+  height: $icon-size-default;
+  width: $icon-size-default;
+  display: block;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+
+  /* VARIABLES */
+
+  &.i-xs {
+    width: $icon-size-xs;
+    height: $icon-size-xs;
+  }
+
+  &.i-sm {
+    width: $icon-size-sm;
+    height: $icon-size-sm;
+  }
+
+  &.i-lg {
+    width: $icon-size-lg;
+    height: $icon-size-lg;
+  }
+
+  &.i-white {
+    background: #fff;
+  }
+
+  &.i-red {
+    background: #f44336;
+  }
+
+  &.i-black {
+    background: #000;
+  }
+
+  &.i-blue {
+    background: #0072E1
+  }
+
+}

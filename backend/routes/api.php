@@ -20,6 +20,7 @@ Route::middleware('auth:api')->group(function () {
     Route::apiResource('users', UserController::class);
     Route::apiResource('sales', SaleController::class);
     Route::get('/users/{id}/sales', [UserController::class, 'getSalesByUser']);
+    Route::get('/users/getByEmail/{email}', [UserController::class, 'getByEmail']);
 });
 
 Route::post('login', 'App\Http\Controllers\Auth\AuthController@login');

@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\Crypt;
 
 class UserApiTest extends TestCase
 {
@@ -38,9 +39,11 @@ class UserApiTest extends TestCase
         $user = User::factory()->create();
         $token = JWTAuth::fromUser($user);
 
+        $encryptedId = Crypt::encryptString($user->id);
+
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
-        ])->getJson("/api/users/{$user->id}");
+        ])->getJson("/api/users/{$encryptedId}");
 
         $response->assertStatus(200)
             ->assertJson(['id' => $user->id]);
@@ -69,9 +72,11 @@ class UserApiTest extends TestCase
         $user = User::factory()->create();
         $token = JWTAuth::fromUser($user);
 
+        $encryptedId = Crypt::encryptString($user->id);
+
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
-        ])->deleteJson("/api/users/{$user->id}");
+        ])->deleteJson("/api/users/{$encryptedId}");
 
         $response->assertStatus(204);
 

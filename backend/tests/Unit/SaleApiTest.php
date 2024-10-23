@@ -7,6 +7,7 @@ use App\Models\Sale;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\Crypt;
 
 class SaleApiTest extends TestCase
 {
@@ -103,6 +104,8 @@ class SaleApiTest extends TestCase
         $user = User::factory()->create();
         $token = JWTAuth::fromUser($user);
 
+        $encryptedId = Crypt::encryptString($user->id);
+
         Sale::factory()->count(10)->create();
         $sales = Sale::factory()->count(10)->create([
             'user_id' => $user->id,
@@ -110,7 +113,7 @@ class SaleApiTest extends TestCase
 
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
-        ])->getJson("/api/users/{$user->id}/sales");
+        ])->getJson("/api/users/{$encryptedId}/sales");
 
         $response->assertStatus(200)
             ->assertJsonCount(10);

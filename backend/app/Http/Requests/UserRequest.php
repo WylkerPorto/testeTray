@@ -24,17 +24,10 @@ class UserRequest extends FormRequest
         $rules = [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $this->route('user'),
+            // verifica se o método é POST e registra a senha do usuário
+            'password' => $this->isMethod('post') ? 'required|string|min:8' : 'nullable|string|min:8',
+            'is_admin' => 'sometimes|boolean',
         ];
-
-        // Se for uma requisição POST (criação), exigir o campo password
-        if ($this->isMethod('post')) {
-            $rules['password'] = 'required|string|min:8';
-        }
-
-        // Para PUT ou PATCH (atualização), não exigir o password
-        if ($this->isMethod('put') || $this->isMethod('patch')) {
-            $rules['password'] = 'nullable|string|min:8'; // Password opcional
-        }
 
         return $rules;
     }
