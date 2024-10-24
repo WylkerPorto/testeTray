@@ -34,7 +34,7 @@ export default {
         const data = await userService.getUserByEmail(email);
         const userLoged = useUserLogedStore();
         userLoged.setUser(data);
-      } catch (e) {
+      } catch (e: any) {
         if (e?.status === 401) {
           this.$router.push({ name: "login" });
         }
