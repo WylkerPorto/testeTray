@@ -2,19 +2,18 @@
 
 namespace Database\Factories;
 
-use App\Models\User;
+use App\Models\Seller;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class UserFactory extends Factory
+class SellerFactory extends Factory
 {
-    protected $model = User::class;
+    protected $model = Seller::class;
 
     public function definition()
     {
         return [
             'name' => $this->faker->name,
             'email' => $this->faker->unique()->safeEmail,
-            'password' => bcrypt('password'),
         ];
     }
 }

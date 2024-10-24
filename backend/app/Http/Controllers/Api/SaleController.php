@@ -7,6 +7,7 @@ use App\Models\Sale;
 use App\Services\SaleService;
 use App\Http\Requests\SaleRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 
 class SaleController extends Controller
 {
@@ -19,37 +20,53 @@ class SaleController extends Controller
 
     public function index()
     {
-        return Sale::with('user')->get();
+        $sales = Sale::with('seller')->orderBy('created_at', 'desc')->paginate(10);
+
+        // Criptografa o ID da venda
+        $sales->getCollection()->transform(function($sale) {
+            $sale->uid = Crypt::encryptString($sale->id);
+            //criptografa o ID do vendedor
+            $sale->seller->uid = Crypt::encryptString($sale->seller->id);
+            return $sale;
+        });
+
+        return $sales;
     }
 
     public function store(SaleRequest $request)
     {
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'value' => 'required|numeric',
-        ]);
 
         $sale = $this->saleService->createSale($request->all());
 
         return response()->json($sale, 201);
     }
 
-    public function show($id)
+    public function show($encryptedId)
     {
-        return Sale::with('user')->findOrFail($id);
+        $id = Crypt::decryptString($encryptedId);
+
+        $sale = Sale::with('seller')->findOrFail($id);
+
+        $sale->uid = Crypt::encryptString($sale->id);
+
+        return response()->json($sale);
     }
 
-    public function update(SaleRequest $request, $id)
+    public function update(SaleRequest $request, $encryptedId)
     {
+        $id = Crypt::decryptString($encryptedId);
+    
         $sale = Sale::findOrFail($id);
 
-        $this->saleService->updateSale($sale, $request->only('user_id', 'value'));
+        $updatedSale = $this->saleService->updateSale($sale, $request->all());
 
-        return response()->json($sale, 200);
+        return response()->json($updatedSale, 200);
     }
 
-    public function destroy($id)
+    public function destroy($encryptedId)
     {
+        $id = Crypt::decryptString($encryptedId);
+        
         $sale = Sale::findOrFail($id);
 
         $this->saleService->deleteSale($sale);

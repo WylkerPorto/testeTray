@@ -10,6 +10,30 @@ i.icon {
   &.i-locker {
     @include icon('locker');
   }
+
+  &.i-sales {
+    @include icon('sales');
+  }
+
+  &.i-eyes {
+    @include icon('eyes');
+  }
+
+  &.i-market {
+    @include icon('market');
+  }
+
+  &.i-edit {
+    @include icon('edit');
+  }
+
+  &.i-delete {
+    @include icon('delete');
+  }
+
+  &.i-close {
+    @include icon('close');
+  }
 }
 
 

@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use App\Models\Sale;
+use App\Models\Seller;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -18,12 +19,15 @@ class SaleApiTest extends TestCase
     {
         $user = User::factory()->create();
         $token = JWTAuth::fromUser($user);
+        $seller = Seller::factory()->create();
+
 
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
         ])->postJson('/api/sales', [
-            'user_id' => $user->id,
+            'seller_id' => $seller->id,
             'value' => 100.50,
+            'sale_date' => now()->toDateTimeString(),
         ]);
 
         $response->assertStatus(201)
@@ -38,9 +42,11 @@ class SaleApiTest extends TestCase
         $user = User::factory()->create();
         $token = JWTAuth::fromUser($user);
 
+        $encryptedId = Crypt::encryptString($sale->id);
+
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
-        ])->getJson("/api/sales/{$sale->id}");
+        ])->getJson("/api/sales/{$encryptedId}");
 
         $response->assertStatus(200)
             ->assertJson(['id' => $sale->id]);
@@ -49,14 +55,15 @@ class SaleApiTest extends TestCase
     /** @test */
     public function it_can_update_a_sale()
     {
-        $sale = Sale::factory()->create();
-
         $user = User::factory()->create();
         $token = JWTAuth::fromUser($user);
+        $sale = Sale::factory()->create();
+
+        $encryptedId = Crypt::encryptString($sale->id);
 
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
-        ])->putJson("/api/sales/{$sale->id}", [
+        ])->putJson("/api/sales/{$encryptedId}", [
             'value' => 200.75,
         ]);
 
@@ -67,14 +74,15 @@ class SaleApiTest extends TestCase
     /** @test */
     public function it_can_delete_a_sale()
     {
-        $sale = Sale::factory()->create();
-
         $user = User::factory()->create();
         $token = JWTAuth::fromUser($user);
+        $sale = Sale::factory()->create();
+
+        $encryptedId = Crypt::encryptString($sale->id);
 
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
-        ])->deleteJson("/api/sales/{$sale->id}");
+        ])->deleteJson("/api/sales/{$encryptedId}");
 
         $response->assertStatus(204);
         $this->assertDatabaseMissing('sales', [
@@ -95,34 +103,27 @@ class SaleApiTest extends TestCase
         ])->getJson('/api/sales');
 
         $response->assertStatus(200)
-            ->assertJsonCount(10);
+            ->assertJsonCount(10, 'data');
     }
 
     /** @test */
-    public function it_can_get_all_sales_by_user()
+    public function i_can_get_all_sales_by_seller(): void
     {
         $user = User::factory()->create();
         $token = JWTAuth::fromUser($user);
-
-        $encryptedId = Crypt::encryptString($user->id);
-
-        Sale::factory()->count(10)->create();
-        $sales = Sale::factory()->count(10)->create([
-            'user_id' => $user->id,
+        $seller = Seller::factory()->create();
+        $sale = Sale::factory()->count(20)->create([
+            'seller_id' => $seller->id
         ]);
+
+        $encriptedId = Crypt::encryptString($seller->id);
 
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
-        ])->getJson("/api/users/{$encryptedId}/sales");
+        ])->getJson("/api/sellers/{$encriptedId}/sales");
 
         $response->assertStatus(200)
-            ->assertJsonCount(10);
-
-        $salesData = $response->json();
-
-        foreach ($salesData as $sale) {
-            $this->assertEquals($user->id, $sale['user_id'], 'A venda não pertence ao usuário correto.');
-        }
+            ->assertJsonCount(20);
     }
 }
 

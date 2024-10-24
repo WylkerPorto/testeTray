@@ -9,10 +9,10 @@ class Sale extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'value'];
+    protected $fillable = ['seller_id', 'value', 'sale_date'];
 
-    public function user()
+    public function seller()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Seller::class);
     }
 }

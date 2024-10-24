@@ -1,17 +1,47 @@
 <template>
   <div>
     <header>
-      <h1 class="text-xl font-bold">Dashboard</h1>
+      <NavigationDashboard />
     </header>
     <main>
-      <aside></aside>
-      <slot></slot>
+      <aside>
+        <SideMenu />
+      </aside>
+
+      <!-- Conteudo -->
+      <section>
+        <slot></slot>
+      </section>
     </main>
   </div>
 </template>
-<script>
+<script lang="ts">
+import NavigationDashboard from "@/components/core/NavigationDashboard.vue";
+import SideMenu from "@/components/core/SideMenu.vue";
+
 export default {
   name: "DashboardLayout",
+  components: {
+    NavigationDashboard,
+    SideMenu,
+  },
+  mounted() {
+    if (!localStorage.getItem("token")) {
+      this.$router.push({ name: "login" });
+    }
+  },
 };
 </script>
-<style lang=""></style>
+<style lang="scss" scoped>
+main {
+  @apply flex;
+
+  aside {
+    @apply w-48;
+  }
+
+  section {
+    @apply w-full overflow-auto p-8;
+  }
+}
+</style>

@@ -1,4 +1,3 @@
-// src/stores/userLoged.ts
 import { ref } from "vue";
 import { defineStore } from "pinia";
 
@@ -6,26 +5,32 @@ import { defineStore } from "pinia";
 export const useUserLogedStore = defineStore("userLoged", () => {
   // userData será um objeto que contém id, name, email, is_admin
   const userData = ref({
-    id: null,
+    id: null as string | null,
     name: "",
     email: "",
     is_admin: false,
   });
 
   // Função para definir os dados do usuário
-  function setUser(
-    data = {
-      id: null,
-      name: "",
-      email: "",
-      is_admin: false,
-    }
-  ) {
+  function setUser(data: {
+    id: string;
+    name: string;
+    email: string;
+    is_admin: boolean;
+  }) {
     userData.value.id = data.id;
     userData.value.name = data.name;
     userData.value.email = data.email;
     userData.value.is_admin = data.is_admin;
   }
 
-  return { userData, setUser };
+  // Função para limpar os dados do usuário
+  function clearUser() {
+    userData.value.id = null;
+    userData.value.name = "";
+    userData.value.email = "";
+    userData.value.is_admin = false;
+  }
+
+  return { userData, setUser, clearUser };
 });

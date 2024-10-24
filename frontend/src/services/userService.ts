@@ -1,6 +1,9 @@
 import http from "./http";
 
 const userService = {
+  createUser(data: any) {
+    return http.post("/users", data).then((response) => response.data);
+  },
   getAllUsers() {
     return http.get("/users").then((response) => response.data);
   },

@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Crypt;
 
-class UserRequest extends FormRequest
+class SellerRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,12 +22,10 @@ class UserRequest extends FormRequest
      */
     public function rules(): array
     {
-        $userId = $this->route('user') ? Crypt::decryptString($this->route('user')) : null; // Pega o ID do usuário da rota
+        $sellerId = $this->route('seller') ? Crypt::decryptString($this->route('seller')) : null;
         $rules = [
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $userId,
-            // verifica se o método é POST e registra a senha do usuário
-            'password' => $this->isMethod('post') ? 'required|string|min:8' : 'nullable|string|min:8',
+            'email' => 'required|string|email|max:255|unique:sellers,email,' . $sellerId,
         ];
 
         return $rules;

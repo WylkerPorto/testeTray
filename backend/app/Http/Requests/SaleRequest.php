@@ -23,8 +23,8 @@ class SaleRequest extends FormRequest
     {
         $rules = [
             'value' => 'required|numeric',
-            // verifica se o método é POST e se o id do usuário é informado
-            'user_id' => $this->isMethod('post') ? 'required|exists:users,id' : 'nullable|exists:users,id',
+            'seller_id' => $this->isMethod('post') ? 'required|exists:sellers,id' : 'nullable|exists:sellers,id',
+            'sale_date' => $this->isMethod('post') ? 'required|date' : 'nullable|date',
         ];
 
         return $rules;

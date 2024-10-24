@@ -1,16 +1,16 @@
 import http from "./http";
 
-interface LoginCredentials {
+interface ILoginCredentials {
   email: string;
   password: string;
 }
 
-interface LoginResponse {
+interface ILoginResponse {
   token: string;
 }
 
 const authService = {
-  login(credentials: LoginCredentials): Promise<LoginResponse> {
+  login(credentials: ILoginCredentials): Promise<ILoginResponse> {
     return http.post("/login", credentials).then((response) => response.data);
   },
 

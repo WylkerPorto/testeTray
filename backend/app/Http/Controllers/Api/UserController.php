@@ -21,15 +21,19 @@ class UserController extends Controller
 
     public function index()
     {
-        return User::all()->map(function($user) {
+        $users = User::paginate(10);
+
+        // Criptografa o ID do usuário
+        $users->getCollection()->transform(function($user) {
             $user->uid = Crypt::encryptString($user->id);
             return $user;
         });
+
+        return $users;
     }
 
     public function store(UserRequest $request)
     {
-
         $user = $this->userService->createUser($request->all());
 
         return response()->json($user, 201);
@@ -46,9 +50,11 @@ class UserController extends Controller
         return response()->json($user);
     }
 
-    public function update(UserRequest $request, $id)
+    public function update(UserRequest $request, $encryptedId)
     {
+        $id = Crypt::decryptString($encryptedId);
         $user = User::findOrFail($id);
+
 
         $updatedUser = $this->userService->updateUser($user, $request->all());
 
@@ -64,17 +70,6 @@ class UserController extends Controller
         $this->userService->deleteUser($user);
 
         return response()->json(null, 204);
-    }
-
-    public function getSalesByUser($encryptedId)
-    {
-        $id = Crypt::decryptString($encryptedId);
-        
-        $user = User::findOrFail($id);
-
-        $sales = Sale::where('user_id', $user->id)->get();
-        
-        return response()->json($sales, 200);
     }
 
     public function getByEmail($email)

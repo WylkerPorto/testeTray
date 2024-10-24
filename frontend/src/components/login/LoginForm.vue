@@ -88,6 +88,7 @@ export default {
     async handleSetUser(token: string) {
       try {
         localStorage.setItem("token", token);
+        localStorage.setItem("email", this.form.email);
         const data = await userService.getUserByEmail(this.form.email);
         const userLoged = useUserLogedStore();
         userLoged.setUser(data);
