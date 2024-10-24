@@ -106,6 +106,16 @@ Para iniciar as filas:
 
 ## Acessando a Aplicação
 
+As credenciais de acesso são:
+
+login:
+
+    local@host.com
+
+senha:
+
+    admin123
+
 - [Frontend (Vue)](http://localhost)
 - [Backend (Laravel)](http://localhost/api)
 
