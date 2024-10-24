@@ -84,6 +84,8 @@ Edite o arquivo .env e configure as informações do banco de dados e fila. Por 
 
     QUEUE_CONNECTION=database
 
+    MAIL_MAILER=log
+
 Execute as Migrations e Seeders:
 
 Para criar as tabelas no banco de dados:
