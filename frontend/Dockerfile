@@ -8,6 +8,7 @@ COPY . .
 
 # Instala as dependências
 RUN npm install
+RUN npm update
 
 # Compila o projeto
 RUN npm run build
