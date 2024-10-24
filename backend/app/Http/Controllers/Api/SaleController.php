@@ -8,6 +8,8 @@ use App\Services\SaleService;
 use App\Http\Requests\SaleRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use App\Mail\SellerEmail;
+use Illuminate\Support\Facades\Mail;
 
 class SaleController extends Controller
 {
@@ -72,5 +74,25 @@ class SaleController extends Controller
         $this->saleService->deleteSale($sale);
 
         return response()->json(null, 204);
+    }
+
+    public function resendCommission($encryptedId)
+    {
+        $id = Crypt::decryptString($encryptedId);
+
+        // Busca a venda específica
+        $sale = Sale::with('seller')->findOrFail($id);
+        $salesForSeller = collect([$sale]);
+
+        // Calcular o valor total e a comissão total
+        $valorTotal = $salesForSeller->sum('value');
+        $comissaoTotal = $salesForSeller->sum(function ($sale) {
+            return $sale->value * 0.085; // Supondo que a comissão seja 8,5%
+        });
+
+        // Envia o e-mail para o vendedor
+        Mail::to($sale->seller->email)->send(new SellerEmail($salesForSeller, $valorTotal, $comissaoTotal));
+
+        return response()->json(['message' => 'E-mail reenviado com sucesso.'], 200);
     }
 }

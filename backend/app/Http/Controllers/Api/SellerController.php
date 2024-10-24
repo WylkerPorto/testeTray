@@ -71,12 +71,23 @@ class SellerController extends Controller
         return response()->json(null, 204);
     }
 
-    public function getSalesBySeller($encryptedId)
+    public function getSalesBySeller(Request $request, $encryptedId)
     {
         $id = Crypt::decryptString($encryptedId);
 
-        $sales = Sale::with('seller')->where('seller_id', $id)
-            ->orderBy('sale_date', 'desc')->get();
+        // Verifica se a data foi fornecida no request
+        $saleDate = $request->query('date');
+        
+        // Consulta as vendas com base no ID do vendedor
+        $query = Sale::with('seller')->where('seller_id', $id);
+        
+        // Se a data for fornecida, filtra pela data específica
+        if ($saleDate) {
+            $query->whereDate('sale_date', $saleDate);
+        }
+        
+        // Ordena por data de venda (desc) e obtém os resultados
+        $sales = $query->orderBy('sale_date', 'desc')->get();
         
         return response()->json($sales, 200);
     }

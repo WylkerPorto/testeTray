@@ -23,6 +23,7 @@ Route::middleware('auth:api')->group(function () {
     Route::apiResource('sales', SaleController::class);
     Route::get('/sellers/{id}/sales', [SellerController::class, 'getSalesBySeller']);
     Route::get('/users/getByEmail/{email}', [UserController::class, 'getByEmail']);
+    Route::post('/sales/{id}/resend-commission', [SaleController::class, 'resendCommission']);
 });
 
 Route::post('login', 'App\Http\Controllers\Auth\AuthController@login');

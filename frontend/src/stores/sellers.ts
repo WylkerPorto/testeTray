@@ -1,13 +1,7 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
 import sellerService from "@/services/sellerService";
-
-interface IUser {
-  id: string;
-  uid: string;
-  name: string;
-  email: string;
-}
+import type { IUser } from "@/interfaces/IUser";
 
 export const useSellersStore = defineStore("sellers", () => {
   const sellers = ref<IUser[]>([]);

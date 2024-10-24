@@ -1,29 +1,39 @@
 import http from "./http";
 
 const saleService = {
-  createSale(data: any) {
-    return http.post("/sales", data).then((response) => response.data);
+  async createSale(data: any) {
+    return await http.post("/sales", data).then((response) => response.data);
   },
-  getAllSales() {
-    return http.get("/sales").then((response) => response.data);
-  },
-
-  getSaleById(saleId: string) {
-    return http.get(`/sales/${saleId}`).then((response) => response.data);
-  },
-
-  updateSale(saleId: string, data: any) {
-    return http.put(`/sales/${saleId}`, data).then((response) => response.data);
-  },
-
-  deleteSale(saleId: string) {
-    return http.delete(`/sales/${saleId}`).then((response) => response.data);
-  },
-
-  getSalesBySeller(sellerId: string) {
-    return http
-      .get(`/sellers/${sellerId}/sales`)
+  async getAllSales(pageUrl?: string) {
+    return await http
+      .get(pageUrl || "/sales")
       .then((response) => response.data);
+  },
+
+  async getSaleById(saleId: string) {
+    return await http.get(`/sales/${saleId}`).then((response) => response.data);
+  },
+
+  async updateSale(saleId: string, data: any) {
+    return await http
+      .put(`/sales/${saleId}`, data)
+      .then((response) => response.data);
+  },
+
+  async deleteSale(saleId: string) {
+    return await http
+      .delete(`/sales/${saleId}`)
+      .then((response) => response.data);
+  },
+
+  async getSalesBySeller(sellerId: string, date: string) {
+    return await http
+      .get(`/sellers/${sellerId}/sales?date=${date}`)
+      .then((response) => response.data);
+  },
+
+  async resendCommission(saleId: string) {
+    return await http.post(`/sales/${saleId}/resend-commission`);
   },
 };
 

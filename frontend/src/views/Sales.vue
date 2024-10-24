@@ -25,7 +25,7 @@ export default {
   },
   methods: {
     atualizaTabela() {
-      this.$refs.listTable.buscarVendas();
+      this.$refs?.listTable?.buscarVendas();
     },
   },
 };

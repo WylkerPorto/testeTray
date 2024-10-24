@@ -12,19 +12,31 @@
         <td>{{ user.name }}</td>
         <td>{{ user.email }}</td>
         <td>
-          <button @click="mostrarModalVendedor(user)">
+          <button @click="mostrarModalVendedor(user)" title="Editar Vendedor">
             <i class="icon i-edit i-white"></i>
           </button>
-          <button @click="mostrarModalExcluirVendedor(user)">
+          <button
+            @click="mostrarModalExcluirVendedor(user)"
+            title="Excluir Vendedor"
+          >
             <i class="icon i-delete i-white"></i>
           </button>
-          <button @click="mostrarVendaPorVendedor(user)">
+          <button
+            @click="mostrarVendaPorVendedor(user)"
+            title="Lista de Vendas por Dia"
+          >
             <i class="icon i-market i-white"></i>
           </button>
         </td>
       </tr>
     </tbody>
   </table>
+
+  <Paginator
+    v-if="pagination.last_page > 1"
+    :pagination="pagination"
+    @change="buscarVendedores"
+  />
 
   <CreateModal
     :open="showSellerModal"
@@ -46,21 +58,15 @@
 import sellerService from "@/services/sellerService";
 import CreateModal from "@/components/sellers/CreateModal.vue";
 import DeleteModal from "@/components/core/DeleteModal.vue";
-
-interface IUser {
-  uid: string;
-  name: string;
-  email: string;
-  created_at: string;
-  updated_at: string;
-}
+import Paginator from "@/components/core/Paginator.vue";
+import type { IUser } from "@/interfaces/IUser";
 
 export default {
   name: "ListSellersTable",
   data() {
     return {
       users: [] as IUser[],
-      totalPages: 0,
+      pagination: {} as any,
       loading: false,
       showSellerModal: false,
       user: {} as IUser,
@@ -70,18 +76,26 @@ export default {
   components: {
     CreateModal,
     DeleteModal,
+    Paginator,
   },
   emits: ["update"],
   mounted() {
     this.buscarVendedores();
   },
   methods: {
-    async buscarVendedores() {
+    async buscarVendedores(pageUrl?: string) {
       this.loading = true;
       try {
-        const data = await sellerService.getAllSellers();
+        const data = await sellerService.getAllSellers(pageUrl);
         this.users = data.data;
-        this.totalPages = data.last_page;
+        this.pagination = {
+          // Atribui o resto das informações de paginação
+          current_page: data.current_page,
+          last_page: data.last_page,
+          prev_page_url: data.prev_page_url,
+          next_page_url: data.next_page_url,
+          total: data.total,
+        };
       } catch (e) {
         console.log("error", e);
       } finally {

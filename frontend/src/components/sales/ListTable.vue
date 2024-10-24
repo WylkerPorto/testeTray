@@ -4,6 +4,7 @@
       <tr>
         <th>Vendedor</th>
         <th>Valor</th>
+        <th>Comissão</th>
         <th>Data da Venda</th>
         <th>ações</th>
       </tr>
@@ -11,19 +12,29 @@
     <tbody>
       <tr v-for="sale in sales" :key="sale.uid">
         <td>{{ sale?.seller?.name }}</td>
-        <td>{{ sale.value }}</td>
+        <td>R$: {{ sale.value }}</td>
+        <td>R$: {{ (Number(sale.value) * 0.085).toFixed(2) }}</td>
         <td>{{ moment(sale.sale_date).format("DD/MM/YY") }}</td>
         <td>
-          <button @click="mostrarModalVenda(sale)">
+          <button @click="mostrarModalVenda(sale)" title="Editar Venda">
             <i class="icon i-edit i-white"></i>
           </button>
-          <button @click="mostrarModalExcluirVenda(sale)">
+          <button @click="mostrarModalExcluirVenda(sale)" title="Excluir Venda">
             <i class="icon i-delete i-white"></i>
+          </button>
+          <button @click="reenviarVenda(sale)" title="Reenviar Email">
+            <i class="icon i-report i-white"></i>
           </button>
         </td>
       </tr>
     </tbody>
   </table>
+
+  <Paginator
+    v-if="pagination.last_page > 1"
+    :pagination="pagination"
+    @change="buscarVendas"
+  />
 
   <CreateModal
     :open="showSaleModal"
@@ -46,16 +57,8 @@ import saleService from "@/services/saleService";
 import moment from "moment";
 import CreateModal from "@/components/sales/CreateModal.vue";
 import DeleteModal from "@/components/core/DeleteModal.vue";
-
-interface ISale {
-  uid: string;
-  seller_id: string;
-  seller: { uid: string; name: string };
-  value: string;
-  sale_date: string;
-  created_at: string;
-  updated_at: string;
-}
+import Paginator from "@/components/core/Paginator.vue";
+import type { ISale } from "@/interfaces/ISale";
 
 export default {
   name: "ListSalesTable",
@@ -63,7 +66,7 @@ export default {
     return {
       moment,
       sales: [] as ISale[],
-      totalPages: 0,
+      pagination: {} as any,
       loading: false,
       showSaleModal: false,
       sale: {} as ISale,
@@ -73,18 +76,26 @@ export default {
   components: {
     CreateModal,
     DeleteModal,
+    Paginator,
   },
   emits: ["update"],
   mounted() {
     this.buscarVendas();
   },
   methods: {
-    async buscarVendas() {
+    async buscarVendas(PageUrl?: string) {
       this.loading = true;
       try {
-        const data = await saleService.getAllSales();
+        const data = await saleService.getAllSales(PageUrl);
         this.sales = data.data;
-        this.totalPages = data.last_page;
+        this.pagination = {
+          // Atribui o resto das informações de paginação
+          current_page: data.current_page,
+          last_page: data.last_page,
+          prev_page_url: data.prev_page_url,
+          next_page_url: data.next_page_url,
+          total: data.total,
+        };
       } catch (e) {
         console.log("error", e);
       } finally {
@@ -127,6 +138,15 @@ export default {
         console.log("error", e);
       }
     },
+
+    async reenviarVenda(sale: ISale) {
+      try {
+        await saleService.resendCommission(sale.uid);
+        alert("Comissão reenviada com sucesso!");
+      } catch (error) {
+        console.error("Erro ao reenviar comissão:", error);
+      }
+    },
   },
 };
 </script>
@@ -155,6 +175,10 @@ table {
 
           &:has(.i-delete) {
             @apply bg-red-700 hover:shadow-red-400;
+          }
+
+          &:has(.i-report) {
+            @apply bg-yellow-700 hover:shadow-yellow-400;
           }
         }
       }

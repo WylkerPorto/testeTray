@@ -1,29 +1,33 @@
 import http from "./http";
 
 const userService = {
-  createUser(data: any) {
-    return http.post("/users", data).then((response) => response.data);
+  async createUser(data: any) {
+    return await http.post("/users", data).then((response) => response.data);
   },
-  getAllUsers() {
-    return http.get("/users").then((response) => response.data);
-  },
-
-  getUserById(userId: string) {
-    return http.get(`/users/${userId}`).then((response) => response.data);
+  async getAllUsers() {
+    return await http.get("/users").then((response) => response.data);
   },
 
-  getUserByEmail(email: string) {
-    return http
+  async getUserById(userId: string) {
+    return await http.get(`/users/${userId}`).then((response) => response.data);
+  },
+
+  async getUserByEmail(email: string) {
+    return await http
       .get(`/users/getByEmail/${email}`)
       .then((response) => response.data);
   },
 
-  updateUser(userId: string, data: any) {
-    return http.put(`/users/${userId}`, data).then((response) => response.data);
+  async updateUser(userId: string, data: any) {
+    return await http
+      .put(`/users/${userId}`, data)
+      .then((response) => response.data);
   },
 
-  deleteUser(userId: string) {
-    return http.delete(`/users/${userId}`).then((response) => response.data);
+  async deleteUser(userId: string) {
+    return await http
+      .delete(`/users/${userId}`)
+      .then((response) => response.data);
   },
 };
 

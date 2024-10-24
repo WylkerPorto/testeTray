@@ -18,6 +18,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 p {
-  @apply font-bold text-3xl mb-5 text-center mb-10;
+  @apply font-bold text-3xl text-center mb-10;
 }
 </style>

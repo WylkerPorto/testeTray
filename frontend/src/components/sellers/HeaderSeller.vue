@@ -13,14 +13,7 @@
 <script lang="ts">
 import CreateModal from "@/components/sellers/CreateModal.vue";
 import sellerService from "@/services/sellerService";
-
-interface IUser {
-  uid: string;
-  name: string;
-  email: string;
-  created_at: string;
-  updated_at: string;
-}
+import type { IUser } from "@/interfaces/IUser";
 
 export default {
   name: "HeaderSeller",

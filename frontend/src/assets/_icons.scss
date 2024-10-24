@@ -34,6 +34,10 @@ i.icon {
   &.i-close {
     @include icon('close');
   }
+
+  &.i-report {
+    @include icon('report');
+  }
 }
 
 

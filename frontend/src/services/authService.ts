@@ -10,8 +10,10 @@ interface ILoginResponse {
 }
 
 const authService = {
-  login(credentials: ILoginCredentials): Promise<ILoginResponse> {
-    return http.post("/login", credentials).then((response) => response.data);
+  async login(credentials: ILoginCredentials): Promise<ILoginResponse> {
+    return await http
+      .post("/login", credentials)
+      .then((response) => response.data);
   },
 
   logout() {

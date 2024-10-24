@@ -13,16 +13,7 @@
 <script lang="ts">
 import CreateModal from "@/components/sales/CreateModal.vue";
 import saleService from "@/services/saleService";
-
-interface ISale {
-  uid: string;
-  seller_id: string;
-  seller: { uid: string; name: string };
-  value: string;
-  sale_date: string;
-  created_at: string;
-  updated_at: string;
-}
+import type { ISale } from "@/interfaces/ISale";
 
 export default {
   name: "HeaderSale",

@@ -1,25 +1,29 @@
 import http from "./http";
 
 const sellersService = {
-  createSeller(data: any) {
-    return http.post("/sellers", data).then((response) => response.data);
+  async createSeller(data: any) {
+    return await http.post("/sellers", data).then((response) => response.data);
   },
-  getAllSellers() {
-    return http.get("/sellers").then((response) => response.data);
-  },
-
-  getSellerById(sellerId: string) {
-    return http.get(`/sellers/${sellerId}`).then((response) => response.data);
+  async getAllSellers(pageUrl?: string) {
+    return await http
+      .get(pageUrl || "/sellers")
+      .then((response) => response.data);
   },
 
-  updateSeller(sellerId: string, data: any) {
-    return http
+  async getSellerById(sellerId: string) {
+    return await http
+      .get(`/sellers/${sellerId}`)
+      .then((response) => response.data);
+  },
+
+  async updateSeller(sellerId: string, data: any) {
+    return await http
       .put(`/sellers/${sellerId}`, data)
       .then((response) => response.data);
   },
 
-  deleteSeller(sellerId: string) {
-    return http
+  async deleteSeller(sellerId: string) {
+    return await http
       .delete(`/sellers/${sellerId}`)
       .then((response) => response.data);
   },
