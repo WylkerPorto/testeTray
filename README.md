@@ -67,6 +67,10 @@ Gere a chave de aplicação:
 
     php artisan key:generate
 
+Gere a chave de autenticação:
+
+    php artisan jwt:secret
+
 Configuração do Banco de Dados:
 
 Edite o arquivo .env e configure as informações do banco de dados e fila. Por exemplo:
