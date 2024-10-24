@@ -1,17 +1,23 @@
 # frontend/Dockerfile
-FROM node:18
+FROM node:22
 
 WORKDIR /app
 
-# Copia os arquivos do projeto
-COPY . .
+# Define NODE_ENV como development
+ENV NODE_ENV=development
+
+# Copia apenas os arquivos de configuração primeiro
+COPY package*.json ./
 
 # Instala as dependências
-RUN npm install && npm list
+RUN npm install
 
-# Compila o projeto
-RUN npm run build
+# Copia o restante dos arquivos do projeto
+COPY . .
 
-# Executa o servidor
+# Verifica a instalação do Vite
+RUN npx vite --version
+
+# Executa o servidor de desenvolvimento
 CMD ["npm", "run", "dev"]
 EXPOSE 5173
